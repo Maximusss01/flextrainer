@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FLEX Essay Trainer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap">
+<style>
+:root{--bg:#fff;--tx:#111;--mu:#555;--bar:#2f6b9a;--peach:#fcc9b5;--ptx:#111;--nb:#c9573f;--tips:#d3f1fd;--tipb:#9fd3ea;--ph:#d6e6f3;--pb:#8fa5b8;--red:#d40000;--ok:#0b7a30;--btn:#2a5f86;--in:#fff;--card:#f6f8fa;--warn:#fff3cd;--warnt:#664d03}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181d;--tx:#e8eaed;--mu:#9aa3ad;--bar:#2a5d85;--peach:#5c3b2f;--ptx:#f3e4de;--nb:#e0795e;--tips:#16313f;--tipb:#2c5a70;--ph:#223a4e;--pb:#41566a;--red:#ff6b6b;--ok:#4cd07d;--btn:#3a79a8;--in:#1b2128;--card:#1b2128;--warn:#4a3d12;--warnt:#f5df9a}}
+:root[data-theme="dark"]{--bg:#14181d;--tx:#e8eaed;--mu:#9aa3ad;--bar:#2a5d85;--peach:#5c3b2f;--ptx:#f3e4de;--nb:#e0795e;--tips:#16313f;--tipb:#2c5a70;--ph:#223a4e;--pb:#41566a;--red:#ff6b6b;--ok:#4cd07d;--btn:#3a79a8;--in:#1b2128;--card:#1b2128;--warn:#4a3d12;--warnt:#f5df9a}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 Arial,Helvetica,sans-serif}
+#app{max-width:860px;margin:0 auto;padding:14px 14px 60px}
+h1,h2,.bar,.ph{font-family:"Open Sans",Arial,sans-serif}
+.top{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:16px}
+.top h1{font-size:22px;margin:0;font-weight:600}.sub{color:var(--mu);font-size:13px}
+.ctl{display:flex;gap:6px;flex-wrap:wrap}
+.ctl button,.seg button{background:var(--card);color:var(--tx);border:1px solid var(--pb);border-radius:4px;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer}
+.ctl button.on,.seg button.on{background:var(--btn);color:#fff;border-color:var(--btn)}
+.bar{background:var(--bar);color:#fff;font-size:26px;padding:6px 10px;margin:8px 0 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:400}
+.bar.locked{opacity:.5;cursor:not-allowed}.badge{font-size:13px;font-family:Arial,sans-serif;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:10px}
+.deadline{background:var(--peach);color:var(--ptx);padding:8px 10px;margin:14px 0 12px}
+.note-box{border:1.5px solid var(--nb);border-radius:12px;padding:10px 14px;margin:12px 0}
+.tips{background:var(--tips);border:1px solid var(--tipb);padding:10px 16px;margin:14px 0;font-size:14px}
+.tips ul{margin:6px 0 0;padding-left:22px}.tips li{margin:4px 0}
+.body{padding:6px 0 10px}
+.panel{border:1px solid var(--pb);margin:12px 0}
+.ph{background:var(--ph);padding:3px 6px;font-size:14px;color:var(--tx)}
+.pb{padding:10px 6px}
+.pg{display:grid;grid-template-columns:1fr 2fr 1fr;gap:4px;padding:4px;align-items:stretch}
+.cell{background:var(--card);padding:4px 6px;font-size:12px;display:flex;flex-direction:column;gap:3px}.cell i{background:var(--ph);padding:1px 4px}
+.clock{border:1.5px solid #3a9a4f;display:flex;align-items:center;justify-content:center;font-size:26px;min-height:70px;background:var(--in)}
+.clock.low{color:var(--red);border-color:var(--red)}
+.btn{background:var(--btn);color:#fff;border:0;border-radius:3px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer}
+.btn.sm{padding:4px 10px;font-size:13px;align-self:flex-start}
+.btn:focus-visible,button:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #f5a623;outline-offset:2px}
+.qbox{border-left:4px solid var(--bar);background:var(--card);padding:10px 12px;font-weight:600;margin:12px 0}
+textarea{width:100%;min-height:210px;resize:vertical;background:var(--in);color:var(--tx);border:1px solid var(--pb);padding:8px;font:15px/1.5 Arial,sans-serif}
+.cnt{font-weight:700;font-style:italic;color:var(--red);margin:8px 0 12px;font-size:14px}.cnt.good{color:var(--ok)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.note{color:var(--mu);font-size:13px}
+.warn{background:var(--warn);color:var(--warnt);padding:7px 10px;margin-top:10px;font-size:14px;border-radius:4px}.warn:empty{display:none}
+.ready{margin:10px 0}.done-msg{border:1.5px solid var(--nb);border-radius:12px;padding:8px 14px;margin:12px 0}
+.res{font-weight:600;margin:6px 0}.res.ok{color:var(--ok)}.res.no{color:var(--red)}
+.card{background:var(--card);border:1px solid var(--pb);border-radius:6px;padding:14px 16px;margin:12px 0}
+.card h2{margin:0 0 6px;font-size:19px;font-weight:600}
+.seg{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+.sel{display:block;margin:10px 0;font-size:13px;color:var(--mu)}.sel select{display:block;width:100%;margin-top:3px;padding:7px;background:var(--in);color:var(--tx);border:1px solid var(--pb);font:inherit;font-size:14px}
+.hi{border-top:1px solid var(--pb);padding:10px 0}.hi summary{cursor:pointer}.hi pre{white-space:pre-wrap;font:14px/1.5 Arial,sans-serif;background:var(--in);padding:8px;margin:8px 0 0;user-select:text}
+.meta{font-size:12px;color:var(--mu)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:9px 16px;border-radius:6px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#toast.on{opacity:1}
+@media(max-width:560px){.pg{grid-template-columns:1fr}.bar{font-size:21px}.clock{min-height:56px}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="toast"></div>
+<script>
+const Q=[
+"What personal characteristics or skills do you have that will help you in living with a host family? How? Why?",
+"Describe a recent time when you felt misunderstood. How did you react? What did you do?",
+"Describe a time in the past 2 years when a situation turned out differently from what you had expected. How did you handle it? What did you learn?",
+"Describe a time when something turned out differently than you expected. How did you react? What did you learn?",
+"Describe a time in the past 2-3 years when you worked to improve something about yourself. Why did you want to improve it? What did you do?",
+"Explain why you think you will succeed in the U.S. on this exchange program. Give at least three reasons or specific examples to support your opinion.",
+"Describe a situation when you were given a responsibility that you didn't want. What did you do? Why?",
+"In US you will live with a host family, but not as a guest, but as a member of it. What will you do to become a part of your host family?",
+"Why you should be a finalist? What makes you a strong candidate?",
+"Everyone is influenced by events in their lives. Describe how you were influenced by an event in the last two years. What did you learn? Explain.",
+"Describe something important that you learned from an experience outside of school in the past 3 years. How it will help you to be a successful exchange student?",
+"Tell us about an experience when you decided to try something new and everything didn't turn out the way you wanted. What did you do?",
+"Give an example of a time in the past 3 years you had to work with someone from a different background or someone who is different from you. What did you do? What did you learn?",
+"Living with a host family and attending American high school is challenging. What characteristics or skills do you have that will help you to become a successful FLEX exchange student?",
+"Describe a situation when you felt that you don't belong or didn't feel comfortable with a group of people. What did you do? Explain.",
+"What activity in the past 3 years has the biggest impact on you? How and why?",
+"Describe situation when you were asked to do something you have never done before, how did you do it and why?",
+"What 3 words you can describe yourself? Why? Explain.",
+"What major changes have happened to you over the past 3 years?",
+"Describe a situation when you had a misunderstanding with friends or family, what did you do?",
+"What life challenges have you faced and how did you overcome them?",
+"Do you often have to adapt to a new situation, is it difficult for you?",
+"What do you expect from the US, besides improving the English language?",
+"Have there been moments in your life when you wanted to give up on your project without finishing it? Why?",
+"Have there been times in your life when you were given advice, didn't follow it, and later regretted it? Why? What did you learn from it?",
+"When did you have to make an important independent decision?",
+"What achievements outside of school are you proud of and why?",
+"What important lessons have you learned that will help you become a successful exchange student?",
+"Describe a situation that happened outside of school where everything went wrong. What did you do? Why?",
+"What experiences in the past three years will help you in America?",
+"Imagine you are in America and invited to a party, but you need to babysit your younger sister. What will you do?"];
+const T={en:{sub:"Future Leaders Exchange — timed essay practice",nav1:"Trainer",nav2:"My essays",
+deadline:"Application Deadline:",et:"U.S. Eastern Time",left:"days left",
+imp:"<b>IMPORTANT!</b> This application must be filled out <b>in English</b>.",
+intro:"You must answer all three (3) essay questions in English and honestly. Each answer must be between 250-1500 characters. You are expected to write answers to these questions yourself and not ask for help from your teachers, parents, or friends. You may <b>NOT</b> use Artificial Intelligence (ChatGPT, OpenAI, etc.). Essays generated by AI will be disqualified. Mistakes in spelling or grammar will not affect your application. If two applicants' essays are identical or similar, both applicants will be disqualified.",
+tips:"TIPS",tl:["You must answer all 3 essay questions. You will be given 15 minutes to answer each essay question.","You cannot use the copy-and-paste function. Please write your essay directly in the text box provided below each essay question.","Before moving to the next essay, BE SURE TO press the Save button at the bottom of each essay page every few minutes. This will ensure that your work is not lost if your computer crashes or loses its Internet connection.","Click “End Timer” when you are finished with the essay and are ready to move to the next section/essay.","<b>A Note About “Character Counts” Used in this Online Application</b><br>Any minimum and maximum character counts specified in the instructions for some questions in this online application will be as indicated by the character counter tool used in this form. Characters are not words."],
+ready:"When you are ready, click the “Start Timer” button below.",tsp:"Timed Section Progress",start:"Start Timer",end:"End Timer",save:"Save",
+started:"Started",ending:"Ending",ended:"Ended",recv:"Your essay has been received. This section is now complete.",
+cnt:n=>`${n} characters counted. Minimum of 250 characters required. Maximum of 1500 characters allowed.`,
+saved:"Saved at",saveWarn:"⚠ Press Save now — it has been more than 3 minutes since your last save.",
+short:"Your essay is below the 250-character minimum. Keep writing before you end the timer.",
+okN:"✓ Within the limits (250–1500 characters). Counted.",noN:"✗ Below the 250-character minimum — in the real form this answer would not be accepted.",
+tup:"Time is up (15 minutes).",nopaste:"Copy and paste are disabled in this form.",ph:"Type your essay here…",
+locked:"Complete the previous essay first",st:{idle:"Not started",run:"In progress",done:"Complete"},
+newS:"New application",setup:"Three questions are drawn from the 31 in the list. Each essay has 15 minutes, and the 5-day deadline starts when you begin.",
+rnd:"Random (like the real form)",man:"Choose questions",rndI:"You will see each question only after pressing Start Timer. Questions you already answered are avoided.",begin:"Begin application",
+reset:"Finish and start a new application",resetC:"Click again to confirm",noH:"No completed essays yet.",clr:"Clear history",used:"Time used",chars:"characters"},
+ru:{sub:"Future Leaders Exchange — тренажёр эссе на время",nav1:"Тренажёр",nav2:"Мои эссе",
+deadline:"Крайний срок подачи:",et:"по восточному времени США",left:"дн. осталось",
+imp:"<b>ВАЖНО!</b> Заявку нужно заполнять <b>на английском языке</b>.",
+intro:"Нужно честно ответить на все три (3) вопроса эссе на английском. Объём каждого ответа — от 250 до 1500 символов. Ответы нужно писать самостоятельно, без помощи учителей, родителей и друзей. Искусственный интеллект (ChatGPT, OpenAI и т.д.) использовать <b>НЕЛЬЗЯ</b>: эссе, созданные ИИ, дисквалифицируются. Орфографические и грамматические ошибки не повлияют на заявку. Если эссе двух участников одинаковы или похожи, оба будут дисквалифицированы.",
+tips:"ПОДСКАЗКИ",tl:["Нужно ответить на все 3 вопроса. На каждый ответ даётся 15 минут.","Копирование и вставка запрещены. Пишите эссе прямо в поле под вопросом.","Перед переходом к следующему эссе ОБЯЗАТЕЛЬНО нажимайте «Save» внизу страницы каждые несколько минут — так работа не потеряется при сбое компьютера или интернета.","Нажмите «End Timer», когда закончили эссе и готовы перейти к следующему.","<b>О подсчёте символов</b><br>Минимум и максимум определяются встроенным счётчиком символов. Считаются символы, а не слова."],
+ready:"Когда будете готовы, нажмите кнопку «Start Timer» ниже.",tsp:"Ход выполнения (таймер)",start:"Start Timer",end:"End Timer",save:"Save",
+started:"Начало",ending:"Окончание",ended:"Завершено",recv:"Эссе получено. Этот раздел завершён.",
+cnt:n=>`Символов: ${n}. Минимум 250, максимум 1500.`,
+saved:"Сохранено в",saveWarn:"⚠ Нажмите Save — с последнего сохранения прошло больше 3 минут.",
+short:"В эссе меньше 250 символов. Допишите текст, прежде чем останавливать таймер.",
+okN:"✓ Объём в норме (250–1500 символов). Засчитано.",noN:"✗ Меньше 250 символов — в настоящей форме такой ответ не приняли бы.",
+tup:"Время вышло (15 минут).",nopaste:"Копирование и вставка отключены.",ph:"Пишите эссе здесь…",
+locked:"Сначала завершите предыдущее эссе",st:{idle:"Не начато",run:"В процессе",done:"Завершено"},
+newS:"Новая заявка",setup:"Три вопроса выбираются из 31 в списке. На каждое эссе 15 минут, а 5-дневный срок начинается с момента старта.",
+rnd:"Случайные (как в реальной форме)",man:"Выбрать вопросы",rndI:"Каждый вопрос появится только после нажатия Start Timer. Уже отвеченные вопросы не повторяются.",begin:"Начать заявку",
+reset:"Завершить и начать новую заявку",resetC:"Нажмите ещё раз для подтверждения",noH:"Завершённых эссе пока нет.",clr:"Очистить историю",used:"Затрачено",chars:"симв."}};
+const t=new Proxy({},{get:(_,k)=>T[lang][k]});
+const DUR=9e5,MIN=250,MAX=1500,$=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const ft=d=>new Date(d).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'medium'});
+let lang=ld('flex.lang','en'),S=ld('flex.s',null),H=ld('flex.h',[]),draft=null,mode='random',open=0,view='main',err='',cr=false;
+if(S){const r=S.ess.findIndex(e=>e.st==='run');open=r>=0?r:Math.max(0,S.ess.findIndex(e=>e.st==='idle'));if(open<0)open=2}
+function pool(ex){const u=new Set(H.map(h=>h.q));let p=Q.map((_,i)=>i).filter(i=>!u.has(i)&&!ex.includes(i));if(!p.length)p=Q.map((_,i)=>i).filter(i=>!ex.includes(i));return p}
+function newDraft(){draft=[];while(draft.length<3){const p=pool(draft);draft.push(p[Math.random()*p.length|0])}}
+function hdr(){return `<header class="top"><div><h1>FLEX Essay Trainer</h1><div class="sub">${t.sub}</div></div><div class="ctl"><button data-act="nav" data-v="main" class="${view=='main'?'on':''}">${t.nav1}</button><button data-act="nav" data-v="hist" class="${view=='hist'?'on':''}">${t.nav2} (${H.length})</button><button data-act="lang">${lang=='en'?'RU':'EN'}</button></div></header>`}
+function setupH(){if(!draft)newDraft();
+let h=`<div class="card"><h2>${t.newS}</h2><p>${t.setup}</p><div class="seg"><button data-act="mode" data-m="random" class="${mode=='random'?'on':''}">🎲 ${t.rnd}</button><button data-act="mode" data-m="manual" class="${mode=='manual'?'on':''}">${t.man}</button></div>`;
+if(mode=='random')h+=`<p class="note">${t.rndI}</p>`;
+else h+=[0,1,2].map(i=>`<label class="sel">Essay No. ${i+1}<select data-sel="${i}">${Q.map((q,j)=>`<option value="${j}" ${draft[i]==j?'selected':''}>${j+1}. ${esc(q.length>85?q.slice(0,85)+'…':q)}</option>`).join('')}</select></label>`).join('');
+return h+`<button class="btn" data-act="begin">${t.begin}</button></div>`}
+function appH(){const dl=S.created+5*864e5,left=Math.max(0,Math.ceil((dl-Date.now())/864e5));
+let h=`<div class="deadline">${t.deadline} <b>${new Date(dl).toLocaleDateString('en-US',{dateStyle:'medium'})}</b> ${t.et} (${left} ${t.left})</div>
+<div class="note-box">${t.imp}</div><p>${t.intro}</p><div class="tips"><b>${t.tips}</b><ul>${t.tl.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+S.ess.forEach((e,i)=>{const lk=i>0&&S.ess[i-1].st!=='done';
+h+=`<div class="bar ${lk?'locked':''}" ${lk?`title="${t.locked}"`:`data-act="toggle" data-i="${i}"`}><span>Essay No. ${i+1}</span><span class="badge">${lk?'🔒':t.st[e.st]}</span></div>`;
+if(open===i&&!lk)h+=sec(i)});
+if(S.ess.every(e=>e.st==='done'))h+=`<p style="margin-top:20px"><button class="btn" data-act="reset">${cr?t.resetC:t.reset}</button></p>`;
+return h}
+function sec(i){const e=S.ess[i],q=Q[S.qs[i]];let h='<div class="body">';
+if(e.st==='idle'){h+=`<p class="ready">${t.ready}</p>`+(S.manual?`<div class="qbox">${esc(q)}</div>`:'')+`<div class="panel"><div class="ph">${t.tsp}</div><div class="pb"><button class="btn" data-act="start" data-i="${i}">${t.start}</button></div></div>`}
+else if(e.st==='run'){h+=`<div class="qbox noclip">${esc(q)}</div><div class="panel"><div class="ph">${t.tsp}</div><div class="pg"><div class="cell"><i>${t.started}</i>${ft(e.start)}</div><div class="clock" id="clk">--</div><div class="cell"><i>${t.ending}</i>${ft(e.start+DUR)}<button class="btn sm" data-act="end" data-i="${i}">${t.end}</button></div></div></div>
+<textarea id="ta" class="noclip" maxlength="${MAX}" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="${t.ph}">${esc(e.text)}</textarea><div id="cnt" class="cnt"></div>
+<div class="row"><button class="btn" data-act="save">${t.save}</button><span id="svn" class="note">${e.saved?t.saved+' '+new Date(e.saved).toLocaleTimeString():''}</span></div><div id="warn" class="warn" hidden>${t.saveWarn}</div><div id="err" class="warn">${esc(err)}</div>`}
+else{const n=e.text.length;h+=`<div class="panel"><div class="ph">${t.tsp}</div><div class="pg" style="grid-template-columns:1fr 1fr"><div class="cell"><i>${t.started}</i>${ft(e.start)}</div><div class="cell"><i>${t.ended}</i>${ft(e.end)}</div></div></div>
+<div class="done-msg">${t.recv}</div><div class="qbox noclip">${esc(q)}</div><textarea class="noclip" readonly>${esc(e.text)}</textarea>
+<div class="cnt ${e.ok?'good':''}">${t.cnt(n)}</div><div class="res ${e.ok?'ok':'no'}">${e.ok?t.okN:t.noN}</div>${e.auto?`<div class="note">${t.tup}</div>`:''}`}
+return h+'</div>'}
+function histH(){if(!H.length)return `<div class="card">${t.noH}</div>`;
+return `<div class="card">`+[...H].reverse().map(h=>`<details class="hi"><summary><b>${esc(Q[h.q])}</b><div class="meta">${ft(h.start)} · ${h.len} ${t.chars} · ${t.used}: ${Math.floor(h.used/6e4)}m ${Math.floor(h.used/1000)%60}s · ${h.ok?'✓':'✗'}</div></summary><pre>${esc(h.text)}</pre></details>`).join('')+`<p><button class="btn sm" data-act="clr">${cr?t.resetC:t.clr}</button></p></div>`}
+function render(){const A=$('#app');A.innerHTML=hdr()+(view=='hist'?histH():S?appH():setupH());upd();
+const ta=$('#ta');if(ta)ta.focus({preventScroll:true})}
+function upd(){const ta=$('#ta'),c=$('#cnt');if(ta&&c){const n=ta.value.length;c.textContent=t.cnt(n);c.classList.toggle('good',n>=MIN&&n<=MAX)}tick(true)}
+function start(i){const e=S.ess[i];e.st='run';e.start=Date.now();e.saved=null;err='';sv('flex.s',S);render()}
+function finish(i,auto){const e=S.ess[i],ta=$('#ta');if(ta)e.text=ta.value;
+if(!auto&&e.text.length<MIN){err=t.short;const x=$('#err');if(x){x.textContent=err;}return}
+e.st='done';e.end=Math.min(Date.now(),e.start+DUR);e.auto=!!auto;const n=e.text.length;e.ok=n>=MIN&&n<=MAX;
+H.push({q:S.qs[i],text:e.text,len:n,start:e.start,end:e.end,used:e.end-e.start,ok:e.ok});sv('flex.h',H);sv('flex.s',S);err='';if(i<2)open=i+1;render()}
+function tick(){if(!S)return;const i=S.ess.findIndex(e=>e.st==='run');if(i<0)return;const e=S.ess[i],r=e.start+DUR-Date.now();
+if(r<=0){finish(i,true);return}const c=$('#clk');if(c){c.textContent=Math.floor(r/6e4)+'m '+(Math.floor(r/1e3)%60)+'s';c.classList.toggle('low',r<6e4)}
+const w=$('#warn');if(w)w.hidden=!(Date.now()-(e.saved||e.start)>18e4)}
+setInterval(tick,500);
+function toast(m){const x=$('#toast');x.textContent=m;x.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>x.classList.remove('on'),1800)}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,i=+b.dataset.i;
+if(a!=='reset'&&a!=='clr')cr=false;
+if(a==='lang'){lang=lang=='en'?'ru':'en';sv('flex.lang',lang)}
+else if(a==='nav')view=b.dataset.v;
+else if(a==='mode')mode=b.dataset.m;
+else if(a==='begin'){if(mode==='random')newDraft();S={created:Date.now(),manual:mode==='manual',qs:[...draft],ess:[0,1,2].map(()=>({st:'idle',text:''}))};open=0;draft=null;sv('flex.s',S)}
+else if(a==='toggle')open=open===i?-1:i;
+else if(a==='start'){start(i);return}
+else if(a==='end'){finish(i,false);return}
+else if(a==='save'){const e=S.ess.find(x=>x.st==='run'),ta=$('#ta');e.text=ta.value;e.saved=Date.now();sv('flex.s',S);$('#svn').textContent=t.saved+' '+new Date(e.saved).toLocaleTimeString();const w=$('#warn');w.hidden=true;return}
+else if(a==='reset'){if(!cr){cr=true}else{S=null;draft=null;sv('flex.s',null);cr=false;view='main'}}
+else if(a==='clr'){if(!cr){cr=true}else{H=[];sv('flex.h',H);cr=false}}
+render()});
+document.addEventListener('change',ev=>{const s=ev.target.dataset&&ev.target.dataset.sel;if(s!=null)draft[+s]=+ev.target.value});
+document.addEventListener('input',ev=>{if(ev.target.id!=='ta')return;const e=S.ess.find(x=>x.st==='run');if(!e)return;e.text=ev.target.value;sv('flex.s',S);upd();err='';const x=$('#err');if(x)x.textContent=''});
+const blocked=ev=>{if(ev.target.closest&&ev.target.closest('.noclip')){ev.preventDefault();toast(t.nopaste)}};
+['paste','copy','cut','drop','dragstart','contextmenu'].forEach(n=>document.addEventListener(n,blocked));
+document.addEventListener('dragover',ev=>{if(ev.target.closest&&ev.target.closest('.noclip'))ev.preventDefault()});
+document.addEventListener('beforeinput',ev=>{if(/^insertFrom(Paste|Drop|Yank)/.test(ev.inputType||'')){ev.preventDefault();toast(t.nopaste)}});
+document.addEventListener('keydown',ev=>{if(!ev.target.closest||!ev.target.closest('.noclip'))return;const k=(ev.key||'').toLowerCase();
+if(((ev.ctrlKey||ev.metaKey)&&['v','c','x'].includes(k))||(ev.shiftKey&&k==='insert')||(ev.ctrlKey&&k==='insert')){ev.preventDefault();toast(t.nopaste)}});
+render();
+</script>
+</body>
+</html>
